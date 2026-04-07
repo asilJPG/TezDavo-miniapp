@@ -48,7 +48,7 @@ export interface PharmacyInventory {
   medicine_id: string;
   price: number;
   quantity: number;
-  in_stock: boolean;
+  in_stock?: boolean;
   pharmacy?: Pharmacy;
   medicine?: Medicine;
 }

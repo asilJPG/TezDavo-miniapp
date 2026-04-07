@@ -156,9 +156,9 @@ export function HomePage() {
                     )}
                   </div>
                   <span
-                    className={`badge ${ph.is_active ? "badge-green" : "badge-gray"}`}
+                    className={`badge ${ph.is_active || ph.is_verified ? "badge-green" : "badge-gray"}`}
                   >
-                    {ph.is_active ? "Открыта" : "Закрыта"}
+                    {ph.is_active || ph.is_verified ? "Открыта" : "Закрыта"}
                   </span>
                 </Link>
               ))}

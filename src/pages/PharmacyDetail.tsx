@@ -30,7 +30,7 @@ export function PharmacyDetailPage() {
   const filtered = inventory.filter(
     (i) =>
       i.medicine?.name?.toLowerCase().includes(search.toLowerCase()) &&
-      i.in_stock,
+      (i.in_stock || i.quantity > 0),
   );
 
   return (
