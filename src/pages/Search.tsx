@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { medicinesApi, pharmaciesApi } from '../lib/api';
-import type { Medicine, Pharmacy } from '../types';
-import styles from './Search.module.css';
+import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import { medicinesApi, pharmaciesApi } from "../lib/api";
+import type { Medicine, Pharmacy } from "../types";
+import styles from "./Search.module.css";
 
-type Tab = 'medicines' | 'pharmacies';
+type Tab = "medicines" | "pharmacies";
 
 export function SearchPage() {
-  const [tab, setTab] = useState<Tab>('medicines');
-  const [query, setQuery] = useState('');
+  const [tab, setTab] = useState<Tab>("medicines");
+  const [query, setQuery] = useState("");
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ export function SearchPage() {
       return;
     }
     timerRef.current = setTimeout(() => {
-      if (tab === 'medicines') searchMedicines(query);
+      if (tab === "medicines") searchMedicines(query);
       else searchPharmacies(query);
     }, 300);
   }, [query, tab]);
@@ -51,7 +51,7 @@ export function SearchPage() {
 
   async function searchPharmacies(q: string) {
     setLoading(true);
-    const all = await pharmaciesApi.list().catch(() => []) as Pharmacy[];
+    const all = (await pharmaciesApi.list().catch(() => [])) as Pharmacy[];
     const filtered = all.filter(
       (p) =>
         p.name.toLowerCase().includes(q.toLowerCase()) ||
@@ -61,39 +61,56 @@ export function SearchPage() {
     setLoading(false);
   }
 
-  const displayList = tab === 'medicines' ? medicines : pharmacies;
+  const displayList = tab === "medicines" ? medicines : pharmacies;
 
   return (
     <div className={styles.page}>
       {/* Search input */}
       <div className={styles.inputWrap}>
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" className={styles.searchIcon}>
+        <svg
+          width="18"
+          height="18"
+          fill="none"
+          viewBox="0 0 24 24"
+          className={styles.searchIcon}
+        >
           <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
-          <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path
+            d="M16.5 16.5L21 21"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
         </svg>
         <input
           ref={inputRef}
           className={styles.input}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={tab === 'medicines' ? 'Название, производитель...' : 'Название аптеки, адрес...'}
+          placeholder={
+            tab === "medicines"
+              ? "Название, производитель..."
+              : "Название аптеки, адрес..."
+          }
         />
         {query && (
-          <button className={styles.clearBtn} onClick={() => setQuery('')}>✕</button>
+          <button className={styles.clearBtn} onClick={() => setQuery("")}>
+            ✕
+          </button>
         )}
       </div>
 
       {/* Tabs */}
       <div className={styles.tabs}>
         <button
-          className={`${styles.tab} ${tab === 'medicines' ? styles.activeTab : ''}`}
-          onClick={() => setTab('medicines')}
+          className={`${styles.tab} ${tab === "medicines" ? styles.activeTab : ""}`}
+          onClick={() => setTab("medicines")}
         >
           💊 Лекарства
         </button>
         <button
-          className={`${styles.tab} ${tab === 'pharmacies' ? styles.activeTab : ''}`}
-          onClick={() => setTab('pharmacies')}
+          className={`${styles.tab} ${tab === "pharmacies" ? styles.activeTab : ""}`}
+          onClick={() => setTab("pharmacies")}
         >
           🏥 Аптеки
         </button>
@@ -110,16 +127,31 @@ export function SearchPage() {
         ) : displayList.length === 0 ? (
           <div className="empty-state">
             <svg width="48" height="48" fill="none" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <circle
+                cx="11"
+                cy="11"
+                r="7"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M16.5 16.5L21 21"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
             </svg>
             <h3>Ничего не найдено</h3>
             <p>Попробуйте другой запрос</p>
           </div>
-        ) : tab === 'medicines' ? (
+        ) : tab === "medicines" ? (
           <div className={styles.list}>
             {(medicines as Medicine[]).map((med) => (
-              <Link key={med.id} to={`/medicine/${med.id}`} className={`card ${styles.item} fade-in`}>
+              <Link
+                key={med.id}
+                to={`/medicine/${med.id}`}
+                className={`card ${styles.item} fade-in`}
+              >
                 <div className={styles.itemIcon}>💊</div>
                 <div className={styles.itemInfo}>
                   <p className={styles.itemName}>{med.name}</p>
@@ -127,11 +159,16 @@ export function SearchPage() {
                     <p className={styles.itemSub}>{med.manufacturer}</p>
                   )}
                 </div>
-                {med.prescription_required && (
+                {med.requires_prescription && (
                   <span className="badge badge-yellow">Рецепт</span>
                 )}
                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                  <path d="M9 18l6-6-6-6" stroke="var(--gray-400)" strokeWidth="2" strokeLinecap="round" />
+                  <path
+                    d="M9 18l6-6-6-6"
+                    stroke="var(--gray-400)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </Link>
             ))}
@@ -139,17 +176,28 @@ export function SearchPage() {
         ) : (
           <div className={styles.list}>
             {(pharmacies as Pharmacy[]).map((ph) => (
-              <Link key={ph.id} to={`/pharmacy/${ph.id}`} className={`card ${styles.item} fade-in`}>
+              <Link
+                key={ph.id}
+                to={`/pharmacy/${ph.id}`}
+                className={`card ${styles.item} fade-in`}
+              >
                 <div className={styles.itemIcon}>🏥</div>
                 <div className={styles.itemInfo}>
                   <p className={styles.itemName}>{ph.name}</p>
                   <p className={styles.itemSub}>{ph.address}</p>
                 </div>
-                <span className={`badge ${ph.is_active ? 'badge-green' : 'badge-gray'}`}>
-                  {ph.is_active ? 'Открыта' : 'Закрыта'}
+                <span
+                  className={`badge ${ph.is_active ? "badge-green" : "badge-gray"}`}
+                >
+                  {ph.is_active ? "Открыта" : "Закрыта"}
                 </span>
                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                  <path d="M9 18l6-6-6-6" stroke="var(--gray-400)" strokeWidth="2" strokeLinecap="round" />
+                  <path
+                    d="M9 18l6-6-6-6"
+                    stroke="var(--gray-400)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </Link>
             ))}

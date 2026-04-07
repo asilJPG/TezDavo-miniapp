@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { medicinesApi } from '../lib/api';
-import { useCartStore } from '../store';
-import { formatPrice } from '../lib/utils';
-import type { MedicineWithPrices, PharmacyInventory, Pharmacy } from '../types';
-import styles from './Medicine.module.css';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { medicinesApi } from "../lib/api";
+import { useCartStore } from "../store";
+import { formatPrice } from "../lib/utils";
+import type { MedicineWithPrices, PharmacyInventory, Pharmacy } from "../types";
+import styles from "./Medicine.module.css";
+import toast from "react-hot-toast";
 
 type Inventory = PharmacyInventory & { pharmacy: Pharmacy };
 
@@ -18,23 +18,28 @@ export function MedicinePage() {
 
   useEffect(() => {
     if (!id) return;
-    medicinesApi.getById(id).then((data) => {
-      setMedicine(data as MedicineWithPrices);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    medicinesApi
+      .getById(id)
+      .then((data) => {
+        setMedicine(data as MedicineWithPrices);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [id]);
 
   function handleAddToCart(inv: Inventory) {
     const cartPharmacy = pharmacyId();
     if (cartPharmacy && cartPharmacy !== inv.pharmacy_id) {
-      const ok = confirm('В корзине есть товары из другой аптеки. Очистить корзину?');
+      const ok = confirm(
+        "В корзине есть товары из другой аптеки. Очистить корзину?",
+      );
       if (!ok) return;
       useCartStore.getState().clear();
     }
     if (!medicine) return;
     addItem(medicine, inv);
     toast.success(`${medicine.name} добавлен в корзину`, {
-      style: { borderRadius: '12px', fontFamily: 'Onest, sans-serif' },
+      style: { borderRadius: "12px", fontFamily: "Onest, sans-serif" },
     });
   }
 
@@ -42,7 +47,9 @@ export function MedicinePage() {
     return (
       <div className={styles.page}>
         <div className={styles.header}>
-          <button className="btn btn-icon" onClick={() => navigate(-1)}>←</button>
+          <button className="btn btn-icon" onClick={() => navigate(-1)}>
+            ←
+          </button>
         </div>
         <div className={styles.skeletonWrap}>
           <div className={`skeleton ${styles.skTop}`} />
@@ -57,15 +64,22 @@ export function MedicinePage() {
     return (
       <div className={styles.page}>
         <div className={styles.header}>
-          <button className="btn btn-icon" onClick={() => navigate(-1)}>←</button>
+          <button className="btn btn-icon" onClick={() => navigate(-1)}>
+            ←
+          </button>
         </div>
-        <div className="empty-state"><h3>Лекарство не найдено</h3></div>
+        <div className="empty-state">
+          <h3>Лекарство не найдено</h3>
+        </div>
       </div>
     );
   }
 
-  const inventory: Inventory[] = (medicine.inventory || []).filter((i) => i.in_stock);
-  const minPrice = inventory.length > 0 ? Math.min(...inventory.map((i) => i.price)) : null;
+  const inventory: Inventory[] = (medicine.inventory || []).filter(
+    (i) => i.in_stock,
+  );
+  const minPrice =
+    inventory.length > 0 ? Math.min(...inventory.map((i) => i.price)) : null;
 
   return (
     <div className={styles.page}>
@@ -73,7 +87,12 @@ export function MedicinePage() {
       <div className={styles.header}>
         <button className="btn btn-icon" onClick={() => navigate(-1)}>
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-            <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+            <path
+              d="M15 18l-6-6 6-6"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
           </svg>
         </button>
         <span className={styles.headerTitle}>Лекарство</span>
@@ -92,7 +111,7 @@ export function MedicinePage() {
             {medicine.category && (
               <span className="badge badge-blue">{medicine.category}</span>
             )}
-            {medicine.prescription_required && (
+            {medicine.requires_prescription && (
               <span className="badge badge-yellow">Требуется рецепт</span>
             )}
           </div>
@@ -127,10 +146,14 @@ export function MedicinePage() {
                 <div key={inv.id} className={`card ${styles.pharmacyRow}`}>
                   <div className={styles.pharmInfo}>
                     <p className={styles.pharmName}>{inv.pharmacy?.name}</p>
-                    <p className={styles.pharmAddress}>{inv.pharmacy?.address}</p>
+                    <p className={styles.pharmAddress}>
+                      {inv.pharmacy?.address}
+                    </p>
                   </div>
                   <div className={styles.pharmRight}>
-                    <p className={styles.pharmPrice}>{formatPrice(inv.price)}</p>
+                    <p className={styles.pharmPrice}>
+                      {formatPrice(inv.price)}
+                    </p>
                     <button
                       className={`btn ${styles.addBtn}`}
                       onClick={() => handleAddToCart(inv)}

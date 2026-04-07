@@ -6,7 +6,7 @@ export interface User {
   first_name: string;
   last_name?: string;
   phone?: string;
-  role: 'user' | 'pharmacy' | 'courier' | 'admin';
+  role: "user" | "pharmacy" | "courier" | "admin";
   created_at: string;
 }
 
@@ -15,22 +15,30 @@ export interface Pharmacy {
   name: string;
   address: string;
   phone: string;
-  latitude?: number;
-  longitude?: number;
+  lat?: number;
+  lng?: number;
+  latitude?: number; // алиас
+  longitude?: number; // алиас
   working_hours?: string;
-  is_active: boolean;
+  is_active?: boolean;
+  is_verified?: boolean;
   rating?: number;
+  review_count?: number;
   logo_url?: string;
 }
 
 export interface Medicine {
   id: string;
   name: string;
+  generic_name?: string;
   description?: string;
   manufacturer?: string;
   category?: string;
-  prescription_required: boolean;
+  requires_prescription: boolean;
+  prescription_required?: boolean; // алиас для совместимости
   image_url?: string;
+  dosage_form?: string;
+  dosage_strength?: string;
   created_at: string;
 }
 
@@ -62,13 +70,13 @@ export interface OrderItem {
 }
 
 export type OrderStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'collecting'
-  | 'ready'
-  | 'delivering'
-  | 'delivered'
-  | 'cancelled';
+  | "pending"
+  | "confirmed"
+  | "collecting"
+  | "ready"
+  | "delivering"
+  | "delivered"
+  | "cancelled";
 
 export interface Order {
   id: string;
