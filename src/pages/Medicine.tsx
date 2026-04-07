@@ -4,6 +4,7 @@ import { medicinesApi } from "../lib/api";
 import { useCartStore } from "../store";
 import { formatPrice } from "../lib/utils";
 import type { Medicine, Pharmacy } from "../types";
+import { Icon } from "../components/ui/Icon";
 import styles from "./Medicine.module.css";
 import toast from "react-hot-toast";
 
@@ -121,7 +122,9 @@ export function MedicinePage() {
       <div className={`scroll-area ${styles.content}`}>
         {/* Hero */}
         <div className={styles.hero}>
-          <div className={styles.heroIcon}>💊</div>
+          <div className={styles.heroIcon}>
+            <Icon name="pill" size={56} />
+          </div>
           <h1 className={styles.name}>{medicine.name}</h1>
           {medicine.manufacturer && (
             <p className={styles.manufacturer}>{medicine.manufacturer}</p>

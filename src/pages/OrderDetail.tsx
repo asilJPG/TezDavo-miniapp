@@ -9,16 +9,26 @@ import {
   ORDER_STATUS_STEPS,
 } from "../lib/utils";
 import type { Order, OrderStatus } from "../types";
+import { Icon } from "../components/ui/Icon";
 import styles from "./OrderDetail.module.css";
 
-const STATUS_ICONS: Record<OrderStatus, string> = {
-  pending: "⏳",
-  confirmed: "✅",
-  collecting: "🔍",
-  ready: "📦",
-  delivering: "🛵",
-  delivered: "🎉",
-  cancelled: "❌",
+const STATUS_ICON_NAMES: Record<
+  OrderStatus,
+  | "pending"
+  | "confirmed"
+  | "collecting"
+  | "ready"
+  | "delivering"
+  | "delivered"
+  | "cancelled"
+> = {
+  pending: "pending",
+  confirmed: "confirmed",
+  collecting: "collecting",
+  ready: "ready",
+  delivering: "delivering",
+  delivered: "delivered",
+  cancelled: "cancelled",
 };
 
 export function OrderDetailPage() {
@@ -126,7 +136,9 @@ export function OrderDetailPage() {
       <div className={`scroll-area ${styles.content}`}>
         {/* Status hero */}
         <div className={`card ${styles.statusCard}`}>
-          <div className={styles.statusIcon}>{STATUS_ICONS[order.status]}</div>
+          <div className={styles.statusIcon}>
+            <Icon name={STATUS_ICON_NAMES[order.status]} size={48} />
+          </div>
           <h2 className={styles.statusLabel}>
             {ORDER_STATUS_LABELS[order.status]}
           </h2>

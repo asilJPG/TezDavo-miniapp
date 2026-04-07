@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { pharmaciesApi } from "../lib/api";
 import { formatPrice } from "../lib/utils";
 import type { Pharmacy, PharmacyInventory, Medicine } from "../types";
+import { Icon } from "../components/ui/Icon";
 import styles from "./PharmacyDetail.module.css";
 
 type InventoryItem = PharmacyInventory & { medicine: Medicine };
@@ -70,7 +71,9 @@ export function PharmacyDetailPage() {
         <div className={`scroll-area ${styles.content}`}>
           {/* Hero */}
           <div className={`card ${styles.hero}`}>
-            <div className={styles.heroIcon}>🏥</div>
+            <div className={styles.heroIcon}>
+              <Icon name="pharmacy" size={48} />
+            </div>
             <h1 className={styles.name}>{pharmacy.name}</h1>
             <p className={styles.address}>{pharmacy.address}</p>
             {pharmacy.working_hours && (
@@ -122,7 +125,9 @@ export function PharmacyDetailPage() {
                     to={`/medicine/${item.medicine_id}`}
                     className={`card ${styles.invItem}`}
                   >
-                    <div className={styles.invIcon}>💊</div>
+                    <div className={styles.invIcon}>
+                      <Icon name="pill" size={22} />
+                    </div>
                     <div className={styles.invInfo}>
                       <p className={styles.invName}>{item.medicine?.name}</p>
                       {item.medicine?.manufacturer && (

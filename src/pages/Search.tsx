@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { medicinesApi, pharmaciesApi } from "../lib/api";
 import type { Medicine, Pharmacy } from "../types";
+import { Icon } from "../components/ui/Icon";
 import styles from "./Search.module.css";
 
 type Tab = "medicines" | "pharmacies";
@@ -152,7 +153,9 @@ export function SearchPage() {
                 to={`/medicine/${med.id}`}
                 className={`card ${styles.item} fade-in`}
               >
-                <div className={styles.itemIcon}>💊</div>
+                <div className={styles.itemIcon}>
+                  <Icon name="pill" size={24} />
+                </div>
                 <div className={styles.itemInfo}>
                   <p className={styles.itemName}>{med.name}</p>
                   {med.manufacturer && (
@@ -181,7 +184,9 @@ export function SearchPage() {
                 to={`/pharmacy/${ph.id}`}
                 className={`card ${styles.item} fade-in`}
               >
-                <div className={styles.itemIcon}>🏥</div>
+                <div className={styles.itemIcon}>
+                  <Icon name="pharmacy" size={24} />
+                </div>
                 <div className={styles.itemInfo}>
                   <p className={styles.itemName}>{ph.name}</p>
                   <p className={styles.itemSub}>{ph.address}</p>

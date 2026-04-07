@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { pharmaciesApi } from "../lib/api";
 import type { Pharmacy } from "../types";
+import { Icon } from "../components/ui/Icon";
 import styles from "./Pharmacies.module.css";
 
 export function PharmaciesPage() {
@@ -81,7 +82,9 @@ export function PharmaciesPage() {
                 to={`/pharmacy/${ph.id}`}
                 className={`card ${styles.card} fade-in`}
               >
-                <div className={styles.logo}>🏥</div>
+                <div className={styles.logo}>
+                  <Icon name="pharmacy" size={28} />
+                </div>
                 <div className={styles.info}>
                   <p className={styles.name}>{ph.name}</p>
                   <p className={styles.address}>{ph.address}</p>

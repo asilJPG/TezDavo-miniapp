@@ -4,6 +4,7 @@ import { useCartStore, useAuthStore } from "../store";
 import { ordersApi, uploadPrescription } from "../lib/api";
 import { formatPrice } from "../lib/utils";
 import toast from "react-hot-toast";
+import { Icon } from "../components/ui/Icon";
 import styles from "./Cart.module.css";
 
 export function CartPage() {
@@ -220,7 +221,7 @@ export function CartPage() {
                   </>
                 ) : (
                   <>
-                    <span>📷</span> Прикрепить рецепт
+                    <Icon name="prescription" size={18} /> Прикрепить рецепт
                   </>
                 )}
               </button>

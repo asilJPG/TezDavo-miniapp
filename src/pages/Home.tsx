@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store";
 import { medicinesApi, pharmaciesApi } from "../lib/api";
 import { formatPrice } from "../lib/utils";
+import { Icon } from "../components/ui/Icon";
 import type { Medicine, Pharmacy } from "../types";
 import styles from "./Home.module.css";
 
@@ -26,7 +27,6 @@ export function HomePage() {
 
   return (
     <div className="scroll-area" style={{ flex: 1 }}>
-      {/* Header */}
       <div className={styles.header}>
         <div>
           <p className={styles.greeting}>
@@ -43,7 +43,6 @@ export function HomePage() {
         </Link>
       </div>
 
-      {/* Search bar */}
       <div className={styles.searchBar} onClick={() => navigate("/search")}>
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
           <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
@@ -57,7 +56,6 @@ export function HomePage() {
         <span>Поиск лекарств или аптек...</span>
       </div>
 
-      {/* Quick stats */}
       <div className={styles.stats}>
         <div className={styles.stat}>
           <span className={styles.statNum}>{pharmacies.length}+</span>
@@ -75,7 +73,6 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* Popular medicines */}
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <h2 className="section-title">Популярные лекарства</h2>
@@ -101,7 +98,7 @@ export function HomePage() {
                 to={`/medicine/${med.id}`}
                 className={`card ${styles.medicineCard} fade-in`}
               >
-                <div className={styles.medicineIcon}>💊</div>
+                <Icon name="pill" size={36} />
                 <p className={styles.medicineName}>{med.name}</p>
                 {med.requires_prescription && (
                   <span className="badge badge-yellow" style={{ fontSize: 10 }}>
@@ -114,8 +111,7 @@ export function HomePage() {
         )}
       </section>
 
-      {/* Pharmacies */}
-      <section className={styles.section}>
+      <section className={styles.section} style={{ paddingBottom: 24 }}>
         <div className={styles.sectionHeader}>
           <h2 className="section-title">Ближайшие аптеки</h2>
           <Link to="/pharmacies" className={styles.seeAll}>
@@ -141,7 +137,7 @@ export function HomePage() {
                     {ph.logo_url ? (
                       <img src={ph.logo_url} alt={ph.name} />
                     ) : (
-                      "🏥"
+                      <Icon name="pharmacy" size={28} />
                     )}
                   </div>
                   <div className={styles.pharmacyInfo}>
@@ -150,7 +146,7 @@ export function HomePage() {
                     {ph.working_hours && (
                       <p className={styles.pharmacyHours}>
                         {typeof ph.working_hours === "object"
-                          ? `Пн-Пт: ${(ph.working_hours as any).mon_fri || ""} / Сб-Вс: ${(ph.working_hours as any).sat_sun || ""}`
+                          ? `Пн-Пт: ${(ph.working_hours as any).mon_fri} / Сб-Вс: ${(ph.working_hours as any).sat_sun}`
                           : ph.working_hours}
                       </p>
                     )}
