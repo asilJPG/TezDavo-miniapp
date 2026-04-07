@@ -1,0 +1,71 @@
+.page { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.header {
+  padding: 16px 20px;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--gray-900);
+  letter-spacing: -0.02em;
+}
+
+.content { flex: 1; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+
+.skeleton { height: 100px; border-radius: var(--radius-lg); }
+
+.orderCard {
+  padding: 14px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.15s;
+}
+.orderCard:active { transform: scale(0.98); }
+
+.orderTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.orderId { font-size: 13px; font-weight: 700; color: var(--gray-700); font-family: monospace; }
+
+.pharmacyName { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+
+.orderBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.date { font-size: 12px; color: var(--gray-500); }
+.amount { font-size: 15px; font-weight: 800; color: var(--blue); letter-spacing: -0.02em; }
+
+.liveTag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 1.5s infinite;
+}

@@ -1,0 +1,71 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--gray-50);
+}
+
+.main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav {
+  display: flex;
+  background: var(--white);
+  border-top: 1px solid var(--gray-100);
+  padding-bottom: var(--safe-bottom);
+  padding: 0 4px;
+  padding-bottom: max(var(--safe-bottom), 4px);
+  box-shadow: 0 -1px 0 var(--gray-100);
+}
+
+.navItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  gap: 3px;
+  text-decoration: none;
+  color: var(--gray-400);
+  transition: color 0.15s;
+}
+
+.navItem.active {
+  color: var(--blue);
+}
+
+.iconWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background: var(--red);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid var(--white);
+}
+
+.label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
