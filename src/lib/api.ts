@@ -84,18 +84,24 @@ export const authApi = {
 
 // ─── Medicines ─────────────────────────────────────────────────────────────
 export const medicinesApi = {
-  search: (query?: string, category?: string) => {
+  search: async (query?: string, category?: string) => {
     const params = new URLSearchParams();
     if (query) params.set("q", query);
     if (category) params.set("category", category);
-    return request<any[]>(`/api/medicines?${params}`);
+    const res = await request<any>(`/api/medicines?${params}`);
+    // Бэкенд возвращает { medicines: [...] } или просто [...]
+    return Array.isArray(res) ? res : res.medicines || res.data || [];
   },
   getById: (id: string) => request<any>(`/api/medicines/${id}`),
 };
 
 // ─── Pharmacies ────────────────────────────────────────────────────────────
 export const pharmaciesApi = {
-  list: () => request<any[]>("/api/pharmacies"),
+  list: async () => {
+    const res = await request<any>("/api/pharmacies");
+    // Бэкенд возвращает { pharmacies: [...] } или просто [...]
+    return Array.isArray(res) ? res : res.pharmacies || res.data || [];
+  },
   getById: (id: string) => request<any>(`/api/pharmacies/${id}`),
 };
 
