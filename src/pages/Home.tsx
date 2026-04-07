@@ -148,7 +148,11 @@ export function HomePage() {
                     <p className={styles.pharmacyName}>{ph.name}</p>
                     <p className={styles.pharmacyAddress}>{ph.address}</p>
                     {ph.working_hours && (
-                      <p className={styles.pharmacyHours}>{ph.working_hours}</p>
+                      <p className={styles.pharmacyHours}>
+                        {typeof ph.working_hours === "object"
+                          ? `Пн-Пт: ${(ph.working_hours as any).mon_fri || ""} / Сб-Вс: ${(ph.working_hours as any).sat_sun || ""}`
+                          : ph.working_hours}
+                      </p>
                     )}
                   </div>
                   <span
