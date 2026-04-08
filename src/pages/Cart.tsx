@@ -269,7 +269,7 @@ export function CartPage() {
       {/* Map picker modal */}
       {showMap && (
         <MapPicker
-          onSelect={(addr, lt, ln) => {
+          onSelect={(addr: string, lt: number, ln: number) => {
             setAddress(addr);
             setLat(lt);
             setLng(ln);
