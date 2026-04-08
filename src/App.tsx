@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { Layout } from "./components/layout/Layout";
 import { Splash } from "./components/ui/Splash";
 import { useTelegramInit } from "./hooks/useTelegramInit";
+import { useTelegramBack } from "./hooks/useTelegramBack";
 import { useAuthStore } from "./store";
 
 // Pages
@@ -19,6 +20,7 @@ import { ProfilePage } from "./pages/Profile";
 
 export default function App() {
   useTelegramInit();
+  useTelegramBack();
   const isLoading = useAuthStore((s) => s.isLoading);
 
   if (isLoading) return <Splash />;

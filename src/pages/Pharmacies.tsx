@@ -102,7 +102,7 @@ export function PharmaciesPage() {
                   >
                     {ph.is_active ? "Открыта" : "Закрыта"}
                   </span>
-                  {ph.rating && (
+                  {ph.rating && ph.rating > 0 && (
                     <p className={styles.rating}>⭐ {ph.rating.toFixed(1)}</p>
                   )}
                 </div>

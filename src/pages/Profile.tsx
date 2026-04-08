@@ -21,8 +21,18 @@ export function ProfilePage() {
   async function handleSave() {
     setSaving(true);
     try {
-      const updated = (await authApi.updateProfile(form)) as any;
-      setUser(updated.user || updated);
+      const full_name = `${form.first_name} ${form.last_name}`.trim();
+      const updated = (await authApi.updateProfile({
+        full_name,
+        phone: form.phone || undefined,
+      })) as any;
+      const u = updated.user || updated;
+      setUser({
+        ...user!,
+        first_name: form.first_name,
+        last_name: form.last_name,
+        phone: form.phone,
+      });
       setEditing(false);
       toast.success("Профиль обновлён", {
         style: { borderRadius: "12px", fontFamily: "Onest" },

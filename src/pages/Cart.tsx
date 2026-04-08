@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useCartStore, useAuthStore } from "../store";
 import { ordersApi, uploadPrescription } from "../lib/api";
 import { formatPrice } from "../lib/utils";
-import toast from "react-hot-toast";
+import { MapPicker } from "../components/ui/MapPicker";
 import { Icon } from "../components/ui/Icon";
+import toast from "react-hot-toast";
 import styles from "./Cart.module.css";
 
 export function CartPage() {
@@ -13,9 +14,12 @@ export function CartPage() {
     useCartStore();
   const user = useAuthStore((s) => s.user);
   const [address, setAddress] = useState("");
+  const [lat, setLat] = useState<number | undefined>();
+  const [lng, setLng] = useState<number | undefined>();
   const [notes, setNotes] = useState("");
   const [prescriptionFile, setPrescriptionFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const needsPrescription = items.some((i) => i.medicine.requires_prescription);
@@ -51,6 +55,8 @@ export function CartPage() {
           price: i.inventory.price,
         })),
         delivery_address: address,
+        delivery_lat: lat,
+        delivery_lng: lng,
         prescription_url: prescriptionUrl,
         notes: notes || undefined,
       })) as any;
@@ -74,26 +80,7 @@ export function CartPage() {
           <h2 className={styles.headerTitle}>Корзина</h2>
         </div>
         <div className="empty-state">
-          <svg width="56" height="56" fill="none" viewBox="0 0 24 24">
-            <path
-              d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-            <line
-              x1="3"
-              y1="6"
-              x2="21"
-              y2="6"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-            <path
-              d="M16 10a4 4 0 01-8 0"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-          </svg>
+          <Icon name="ready" size={56} />
           <h3>Корзина пуста</h3>
           <p>Добавьте лекарства из поиска</p>
           <button
@@ -127,7 +114,7 @@ export function CartPage() {
         {/* Pharmacy */}
         {pharmacy && (
           <div className={`card ${styles.pharmacyBanner}`}>
-            <span>🏥</span>
+            <Icon name="pharmacy" size={24} />
             <div>
               <p className={styles.pharmName}>{pharmacy.name}</p>
               <p className={styles.pharmAddr}>{pharmacy.address}</p>
@@ -139,7 +126,9 @@ export function CartPage() {
         <div className={styles.items}>
           {items.map((item) => (
             <div key={item.inventory.id} className={`card ${styles.cartItem}`}>
-              <div className={styles.itemIcon}>💊</div>
+              <div className={styles.itemIcon}>
+                <Icon name="pill" size={24} />
+              </div>
               <div className={styles.itemInfo}>
                 <p className={styles.itemName}>{item.medicine.name}</p>
                 <p className={styles.itemPrice}>
@@ -175,13 +164,27 @@ export function CartPage() {
 
           <div className={styles.field}>
             <label className={styles.label}>Адрес доставки *</label>
-            <textarea
-              className={`input ${styles.textarea}`}
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Ташкент, ул. Навои, д. 5, кв. 12..."
-              rows={2}
-            />
+            <div className={styles.addressRow}>
+              <textarea
+                className={`input ${styles.textarea}`}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Ташкент, ул. Навои, д. 5, кв. 12..."
+                rows={2}
+              />
+              <button
+                className={styles.mapBtn}
+                onClick={() => setShowMap(true)}
+                type="button"
+              >
+                <Icon name="map" size={22} />
+              </button>
+            </div>
+            {lat && lng && (
+              <p className={styles.coordsHint}>
+                📍 Координаты выбраны на карте
+              </p>
+            )}
           </div>
 
           <div className={styles.field}>
@@ -217,7 +220,8 @@ export function CartPage() {
               >
                 {prescriptionFile ? (
                   <>
-                    <span>✅</span> {prescriptionFile.name.slice(0, 25)}...
+                    <Icon name="confirmed" size={18} />{" "}
+                    {prescriptionFile.name.slice(0, 20)}...
                   </>
                 ) : (
                   <>
@@ -261,6 +265,18 @@ export function CartPage() {
           </button>
         </div>
       </div>
+
+      {/* Map picker modal */}
+      {showMap && (
+        <MapPicker
+          onSelect={(addr, lt, ln) => {
+            setAddress(addr);
+            setLat(lt);
+            setLng(ln);
+          }}
+          onClose={() => setShowMap(false)}
+        />
+      )}
     </div>
   );
 }
