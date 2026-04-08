@@ -15,18 +15,13 @@ import { PharmacyDetailPage } from "./pages/PharmacyDetail";
 import { CartPage } from "./pages/Cart";
 import { OrdersPage } from "./pages/Orders";
 import { OrderDetailPage } from "./pages/OrderDetail";
-
 import { ProfilePage } from "./pages/Profile";
 
-export default function App() {
-  useTelegramInit();
+// Отдельный компонент внутри Router — чтобы useNavigate работал
+function AppRoutes() {
   useTelegramBack();
-  const isLoading = useAuthStore((s) => s.isLoading);
-
-  if (isLoading) return <Splash />;
-
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
@@ -37,12 +32,10 @@ export default function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/orders/:id" element={<OrderDetailPage />} />
-
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
-
       <Toaster
         position="top-center"
         toastOptions={{
@@ -54,6 +47,19 @@ export default function App() {
           },
         }}
       />
+    </>
+  );
+}
+
+export default function App() {
+  useTelegramInit();
+  const isLoading = useAuthStore((s) => s.isLoading);
+
+  if (isLoading) return <Splash />;
+
+  return (
+    <BrowserRouter>
+      <AppRoutes />
     </BrowserRouter>
   );
 }
