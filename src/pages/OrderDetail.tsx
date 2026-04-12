@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ordersApi, subscribeToOrder } from "../lib/api";
+import { subscribeToOrder, request } from "../lib/api";
 import {
   formatPrice,
   formatDate,
@@ -40,12 +40,10 @@ export function OrderDetailPage() {
   useEffect(() => {
     if (!id) return;
 
-    // Initial load
-    ordersApi
-      .list()
-      .then((orders) => {
-        const found = (orders as Order[]).find((o) => o.id === id);
-        if (found) setOrder(found);
+    // Загружаем конкретный заказ по ID
+    request<any>(`/api/orders/${id}`)
+      .then((res: any) => {
+        setOrder(res.order || res);
         setLoading(false);
       })
       .catch(() => setLoading(false));

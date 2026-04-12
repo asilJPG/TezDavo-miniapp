@@ -32,7 +32,10 @@ export function hasToken() {
 }
 
 // ─── Base request ──────────────────────────────────────────────────────────
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function request<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(options.headers as Record<string, string>),
