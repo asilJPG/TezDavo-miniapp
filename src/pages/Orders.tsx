@@ -7,17 +7,16 @@ import {
   ORDER_STATUS_LABELS,
   ORDER_STATUS_COLORS,
 } from "../lib/utils";
-import type { Order } from "../types";
 import styles from "./Orders.module.css";
 
 export function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     ordersApi
       .list()
-      .then((data) => setOrders(data as Order[]))
+      .then((data) => setOrders(data as any[]))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
