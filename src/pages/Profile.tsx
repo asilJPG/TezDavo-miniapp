@@ -189,11 +189,7 @@ export function ProfilePage() {
           </div>
         </div>
 
-        <p className={styles.footerNote}>
-          Доставка лекарств по Ташкенту 24/7.
-          <br />
-          Работаем с проверенными аптеками.
-        </p>
+        <div style={{ height: 16 }} />
       </div>
     </div>
   );
