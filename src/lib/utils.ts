@@ -10,14 +10,17 @@ export function formatPrice(amount: number | undefined | null): string {
 // ─── Order status ──────────────────────────────────────────────────────────
 
 export const ORDER_STATUS_LABELS: Record<string, string> = {
-  created: "Создан",
-  pending: "Ожидает",
-  confirmed: "Подтверждён",
-  collecting: "Собирается",
-  ready: "Готов",
-  delivering: "В пути",
-  delivered: "Доставлен",
-  cancelled: "Отменён",
+  created: "⏳ Ожидает подтверждения",
+  confirmed: "✅ Аптека подтвердила",
+  courier_assigned: "🛵 Курьер назначен",
+  courier_picked: "📦 Курьер забрал",
+  delivering: "🛵 Едет к вам",
+  delivered: "🎉 Доставлен",
+  cancelled: "❌ Отменён",
+  // алиасы
+  pending: "⏳ Ожидает",
+  collecting: "🔍 Собирается",
+  ready: "📦 Готов к выдаче",
 };
 
 export const ORDER_STATUS_COLORS: Record<string, string> = {
@@ -25,6 +28,8 @@ export const ORDER_STATUS_COLORS: Record<string, string> = {
   pending: "badge-yellow",
   confirmed: "badge-blue",
   collecting: "badge-blue",
+  courier_assigned: "badge-blue",
+  courier_picked: "badge-blue",
   ready: "badge-blue",
   delivering: "badge-blue",
   delivered: "badge-green",
@@ -34,9 +39,8 @@ export const ORDER_STATUS_COLORS: Record<string, string> = {
 export const ORDER_STATUS_STEPS: string[] = [
   "created",
   "confirmed",
-  "collecting",
-  "ready",
-  "delivering",
+  "courier_assigned",
+  "courier_picked",
   "delivered",
 ];
 

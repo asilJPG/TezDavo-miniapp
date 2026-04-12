@@ -4,6 +4,7 @@ import { useAuthStore } from "../store";
 import { authApi } from "../lib/api";
 import { formatPhone } from "../lib/utils";
 import { Icon } from "../components/ui/Icon";
+import { PhoneRequest } from "../components/ui/PhoneRequest";
 import toast from "react-hot-toast";
 import styles from "./Profile.module.css";
 
@@ -64,6 +65,7 @@ export function ProfilePage() {
       </div>
 
       <div className={`scroll-area ${styles.content}`}>
+        <PhoneRequest />
         <div className={`card ${styles.profileCard}`}>
           <div className={styles.avatar}>{user?.first_name?.[0] || "?"}</div>
           {!editing ? (

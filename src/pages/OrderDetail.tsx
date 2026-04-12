@@ -10,6 +10,7 @@ import {
 } from "../lib/utils";
 import { Icon } from "../components/ui/Icon";
 import styles from "./OrderDetail.module.css";
+import toast from "react-hot-toast";
 
 const STATUS_ICON_NAMES: Record<
   string,
@@ -25,6 +26,8 @@ const STATUS_ICON_NAMES: Record<
   pending: "pending",
   confirmed: "confirmed",
   collecting: "collecting",
+  courier_assigned: "delivering",
+  courier_picked: "ready",
   ready: "ready",
   delivering: "delivering",
   delivered: "delivered",
@@ -36,6 +39,7 @@ export function OrderDetailPage() {
   const navigate = useNavigate();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -55,6 +59,25 @@ export function OrderDetailPage() {
       unsub();
     };
   }, [id]);
+
+  async function handleCancel() {
+    if (!confirm("Отменить заказ?")) return;
+    setCancelling(true);
+    try {
+      await request(`/api/orders/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: "cancelled" }),
+      });
+      setOrder((prev: any) => ({ ...prev, status: "cancelled" }));
+      toast.success("Заказ отменён", {
+        style: { borderRadius: "12px", fontFamily: "Onest" },
+      });
+    } catch (e: any) {
+      toast.error(e.message || "Не удалось отменить");
+    } finally {
+      setCancelling(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -103,6 +126,7 @@ export function OrderDetailPage() {
 
   const currentStep = ORDER_STATUS_STEPS.indexOf(order.status);
   const isActive = !["delivered", "cancelled"].includes(order.status);
+  const canCancel = ["created", "pending"].includes(order.status);
 
   return (
     <div className={styles.page}>
@@ -124,6 +148,7 @@ export function OrderDetailPage() {
       </div>
 
       <div className={`scroll-area ${styles.content}`}>
+        {/* Status hero */}
         <div className={`card ${styles.statusCard}`}>
           <div className={styles.statusIcon}>
             <Icon
@@ -140,6 +165,7 @@ export function OrderDetailPage() {
               Обновляется в реальном времени
             </div>
           )}
+
           {order.status !== "cancelled" && (
             <div className={styles.progress}>
               {ORDER_STATUS_STEPS.map((step, idx) => (
@@ -163,11 +189,13 @@ export function OrderDetailPage() {
           </p>
         </div>
 
+        {/* Delivery address */}
         <div className={`card ${styles.section}`}>
           <h3 className={styles.sectionTitle}>Адрес доставки</h3>
           <p className={styles.address}>{order.delivery_address}</p>
         </div>
 
+        {/* Items */}
         {order.items && order.items.length > 0 && (
           <div className={`card ${styles.section}`}>
             <h3 className={styles.sectionTitle}>Состав заказа</h3>
@@ -195,8 +223,20 @@ export function OrderDetailPage() {
           </div>
         )}
 
+        {/* Summary */}
         <div className={`card ${styles.section}`}>
           <div className={styles.totalRow}>
+            <span>Товары</span>
+            <span>{formatPrice(order.subtotal)}</span>
+          </div>
+          <div
+            className={styles.totalRow}
+            style={{ color: "var(--gray-500)", fontSize: 13 }}
+          >
+            <span>Доставка</span>
+            <span>{formatPrice(order.delivery_fee)}</span>
+          </div>
+          <div className={`${styles.totalRow} ${styles.grandTotal}`}>
             <span>Итого</span>
             <span className={styles.totalAmount}>
               {formatPrice(order.total_amount)}
@@ -205,6 +245,7 @@ export function OrderDetailPage() {
           {order.notes && <p className={styles.notes}>💬 {order.notes}</p>}
         </div>
 
+        {/* Pharmacy */}
         {order.pharmacy && (
           <div className={`card ${styles.section}`}>
             <h3 className={styles.sectionTitle}>Аптека</h3>
@@ -218,6 +259,42 @@ export function OrderDetailPage() {
                 📞 {order.pharmacy.phone}
               </a>
             )}
+          </div>
+        )}
+
+        {/* Cancel button */}
+        {canCancel && (
+          <div style={{ paddingBottom: 16 }}>
+            <button
+              className="btn"
+              style={{
+                width: "100%",
+                padding: "14px",
+                background: "var(--red-light)",
+                color: "var(--red)",
+                borderRadius: "var(--radius)",
+                fontFamily: "var(--font)",
+                fontSize: 15,
+                fontWeight: 600,
+                border: "none",
+                cursor: "pointer",
+              }}
+              onClick={handleCancel}
+              disabled={cancelling}
+            >
+              {cancelling ? (
+                <span
+                  className="spinner"
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderTopColor: "var(--red)",
+                  }}
+                />
+              ) : (
+                "❌ Отменить заказ"
+              )}
+            </button>
           </div>
         )}
       </div>
