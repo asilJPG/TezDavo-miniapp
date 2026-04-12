@@ -107,7 +107,7 @@ export const pharmaciesApi = {
 
 // ─── Orders ────────────────────────────────────────────────────────────────
 export const ordersApi = {
-  create: (data: {
+  create: async (data: {
     pharmacy_id: string;
     items: {
       medicine_id: string;
@@ -120,9 +120,26 @@ export const ordersApi = {
     delivery_lng?: number;
     prescription_url?: string;
     notes?: string;
-  }) => request("/api/orders", { method: "POST", body: JSON.stringify(data) }),
+  }) => {
+    // Бэкенд ожидает inventory_id, не pharmacy_inventory_id
+    const payload = {
+      ...data,
+      items: data.items.map((i) => ({
+        inventory_id: i.pharmacy_inventory_id,
+        medicine_id: i.medicine_id,
+        quantity: i.quantity,
+      })),
+    };
+    return request("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
 
-  list: () => request<any[]>("/api/orders"),
+  list: async () => {
+    const res = await request<any>("/api/orders");
+    return Array.isArray(res) ? res : res.orders || res.data || [];
+  },
 
   updateStatus: (id: string, status: string) =>
     request(`/api/orders/${id}/status`, {
