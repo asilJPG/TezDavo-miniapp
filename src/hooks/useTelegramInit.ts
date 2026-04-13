@@ -21,16 +21,36 @@ export function useTelegramInit() {
 
           if (initData) {
             // Логинимся через /api/auth/telegram — получаем JWT токены
-            const { user } = await loginWithTelegram(initData);
-            setUser({
-              id: user.id,
-              telegram_id: Number(user.telegram_id),
-              first_name: user.full_name.split(" ")[0],
-              last_name:
-                user.full_name.split(" ").slice(1).join(" ") || undefined,
-              role: "user",
-              created_at: new Date().toISOString(),
-            });
+            await loginWithTelegram(initData);
+
+            // Загружаем полный профиль с phone и другими полями
+            try {
+              const profile = (await authApi.getProfile()) as any;
+              const u = profile.user || profile;
+              setUser({
+                id: u.id,
+                telegram_id: Number(u.telegram_id),
+                first_name: (u.full_name || "").split(" ")[0] || "Гость",
+                last_name:
+                  (u.full_name || "").split(" ").slice(1).join(" ") ||
+                  undefined,
+                phone: u.phone || undefined,
+                role: u.role || "user",
+                created_at: u.created_at || new Date().toISOString(),
+              });
+            } catch {
+              // Если профиль не загрузился — используем данные из telegram
+              const { user } = await loginWithTelegram(initData);
+              setUser({
+                id: user.id,
+                telegram_id: Number(user.telegram_id),
+                first_name: user.full_name.split(" ")[0],
+                last_name:
+                  user.full_name.split(" ").slice(1).join(" ") || undefined,
+                role: "user",
+                created_at: new Date().toISOString(),
+              });
+            }
           }
         } else {
           // Dev режим — без Telegram
