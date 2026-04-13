@@ -43,7 +43,19 @@ export function CartPage() {
         )
           .then((r) => r.json())
           .then((data) => {
-            const addr = data.results?.[0]?.formatted_address;
+            const results = data.results || [];
+            // Ищем нормальный адрес — street_address или route, не plus_code
+            const best =
+              results.find(
+                (r: any) =>
+                  r.types.includes("street_address") ||
+                  r.types.includes("premise") ||
+                  r.types.includes("subpremise"),
+              ) ||
+              results.find((r: any) => !r.types.includes("plus_code")) ||
+              results[0];
+
+            const addr = best?.formatted_address;
             if (addr) {
               setGeoPrompt({ address: addr, lat: latitude, lng: longitude });
             }
