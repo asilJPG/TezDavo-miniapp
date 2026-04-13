@@ -25,7 +25,20 @@ export const useAuthStore = create<AuthState>()((set) => ({
   logout: () => set({ user: null }),
 }));
 
-// ─── Cart store ────────────────────────────────────────────────────────────
+// ─── Data cache store ──────────────────────────────────────────────────────
+interface CacheState {
+  medicines: any[];
+  pharmacies: any[];
+  setMedicines: (data: any[]) => void;
+  setPharmacies: (data: any[]) => void;
+}
+
+export const useCacheStore = create<CacheState>()((set) => ({
+  medicines: [],
+  pharmacies: [],
+  setMedicines: (medicines) => set({ medicines }),
+  setPharmacies: (pharmacies) => set({ pharmacies }),
+}));
 interface CartState {
   items: CartItem[];
   addItem: (

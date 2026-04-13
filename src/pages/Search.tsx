@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { medicinesApi, pharmaciesApi } from "../lib/api";
+import { useCacheStore } from "../store";
 import type { Medicine, Pharmacy } from "../types";
 import { Icon } from "../components/ui/Icon";
 import styles from "./Search.module.css";
@@ -8,22 +9,34 @@ import styles from "./Search.module.css";
 type Tab = "medicines" | "pharmacies";
 
 export function SearchPage() {
+  const {
+    medicines: cachedMeds,
+    pharmacies: cachedPharms,
+    setMedicines: cacheMeds,
+    setPharmacies: cachePharms,
+  } = useCacheStore();
   const [tab, setTab] = useState<Tab>("medicines");
   const [query, setQuery] = useState("");
-  const [medicines, setMedicines] = useState<Medicine[]>([]);
-  const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [medicines, setMedicines] = useState<Medicine[]>(
+    cachedMeds as Medicine[],
+  );
+  const [pharmacies, setPharmacies] = useState<Pharmacy[]>(
+    cachedPharms as Pharmacy[],
+  );
+  const [loading, setLoading] = useState(cachedMeds.length === 0);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     inputRef.current?.focus();
+    if (cachedMeds.length === 0) loadAll();
   }, []);
 
   useEffect(() => {
     clearTimeout(timerRef.current);
     if (query.length === 0) {
-      loadAll();
+      setMedicines(cachedMeds as Medicine[]);
+      setPharmacies(cachedPharms as Pharmacy[]);
       return;
     }
     timerRef.current = setTimeout(() => {
@@ -40,6 +53,8 @@ export function SearchPage() {
     ]);
     setMedicines(meds as Medicine[]);
     setPharmacies(pharms as Pharmacy[]);
+    cacheMeds(meds as Medicine[]);
+    cachePharms(pharms as Pharmacy[]);
     setLoading(false);
   }
 

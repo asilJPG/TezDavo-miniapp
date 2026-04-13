@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store";
+import { useAuthStore, useCacheStore } from "../store";
 import { medicinesApi, pharmaciesApi } from "../lib/api";
 import { formatPrice } from "../lib/utils";
 import { Icon } from "../components/ui/Icon";
@@ -10,11 +10,18 @@ import styles from "./Home.module.css";
 export function HomePage() {
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
-  const [medicines, setMedicines] = useState<Medicine[]>([]);
-  const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    medicines: cachedMeds,
+    pharmacies: cachedPharms,
+    setMedicines,
+    setPharmacies,
+  } = useCacheStore();
+  const [loading, setLoading] = useState(cachedMeds.length === 0);
 
   useEffect(() => {
+    // Если кеш есть — не грузим заново
+    if (cachedMeds.length > 0 && cachedPharms.length > 0) return;
+
     Promise.all([
       medicinesApi.search().catch(() => []),
       pharmaciesApi.list().catch(() => []),
@@ -24,6 +31,9 @@ export function HomePage() {
       setLoading(false);
     });
   }, []);
+
+  const medicines = cachedMeds as Medicine[];
+  const pharmacies = cachedPharms as Pharmacy[];
 
   return (
     <div className="scroll-area" style={{ flex: 1 }}>
