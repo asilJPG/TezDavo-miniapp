@@ -1,12 +1,6 @@
 import { useEffect } from "react";
 import { useAuthStore } from "../store";
-import {
-  loginWithTelegram,
-  hasToken,
-  authApi,
-  medicinesApi,
-  pharmaciesApi,
-} from "../lib/api";
+import { loginWithTelegram, hasToken, authApi } from "../lib/api";
 
 const API_BASE = import.meta.env.VITE_API_URL || "https://tez-davo.vercel.app";
 
@@ -46,12 +40,8 @@ export function useTelegramInit() {
           const initData: string = tg.initData || "";
 
           if (initData) {
-            // Логинимся и параллельно прогреваем данные главной
-            await Promise.allSettled([
-              loginWithTelegram(initData),
-              medicinesApi.search(),
-              pharmaciesApi.list(),
-            ]);
+            // Только логинимся — данные загрузятся на страницах
+            await loginWithTelegram(initData);
 
             try {
               const profile = (await authApi.getProfile()) as any;
