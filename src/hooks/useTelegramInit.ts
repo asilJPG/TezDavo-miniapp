@@ -23,6 +23,9 @@ export function useTelegramInit() {
   const { setUser, setLoading } = useAuthStore();
 
   useEffect(() => {
+    // Максимум 1.5 сек сплеш — потом показываем приложение в любом случае
+    const maxWait = setTimeout(() => setLoading(false), 1500);
+
     async function init() {
       try {
         const tg = (window as any).Telegram?.WebApp;
@@ -36,6 +39,7 @@ export function useTelegramInit() {
           const initData: string = tg.initData || "";
 
           if (initData) {
+            // Логинимся и параллельно прогреваем данные главной
             await Promise.allSettled([
               loginWithTelegram(initData),
               medicinesApi.search(),
@@ -103,6 +107,7 @@ export function useTelegramInit() {
       } catch (e) {
         console.error("Init error:", e);
       } finally {
+        clearTimeout(maxWait);
         setLoading(false);
         startKeepalive();
       }

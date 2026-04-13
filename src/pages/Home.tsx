@@ -19,7 +19,6 @@ export function HomePage() {
   const [loading, setLoading] = useState(cachedMeds.length === 0);
 
   useEffect(() => {
-    // Если кеш есть — не грузим заново
     if (cachedMeds.length > 0 && cachedPharms.length > 0) return;
 
     Promise.all([
@@ -30,7 +29,7 @@ export function HomePage() {
       setPharmacies((pharms as Pharmacy[]).slice(0, 5));
       setLoading(false);
     });
-  }, []);
+  }, [cachedMeds.length]);
 
   const medicines = cachedMeds as Medicine[];
   const pharmacies = cachedPharms as Pharmacy[];
