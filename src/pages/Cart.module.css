@@ -216,3 +216,52 @@
   color: var(--green);
   font-weight: 500;
 }
+
+.geoOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.geoModal {
+  background: var(--white);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  width: 100%;
+  padding: 20px 20px max(var(--safe-bottom), 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.geoTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.geoAddress {
+  font-size: 13px;
+  color: var(--gray-600);
+  line-height: 1.5;
+  background: var(--gray-50);
+  padding: 10px 12px;
+  border-radius: var(--radius);
+}
+
+.geoBtns {
+  display: flex;
+  gap: 8px;
+}

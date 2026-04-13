@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCartStore, useAuthStore } from "../store";
 import { ordersApi, uploadPrescription } from "../lib/api";
@@ -20,10 +20,39 @@ export function CartPage() {
   const [prescriptionFile, setPrescriptionFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [geoPrompt, setGeoPrompt] = useState<{
+    address: string;
+    lat: number;
+    lng: number;
+  } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const needsPrescription = items.some((i) => i.medicine.requires_prescription);
   const pharmacy = items[0]?.inventory.pharmacy;
+
+  // При открытии корзины — определяем геолокацию
+  useEffect(() => {
+    if (!navigator.geolocation || address) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        // Геокодируем координаты в адрес
+        fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}&language=ru`,
+        )
+          .then((r) => r.json())
+          .then((data) => {
+            const addr = data.results?.[0]?.formatted_address;
+            if (addr) {
+              setGeoPrompt({ address: addr, lat: latitude, lng: longitude });
+            }
+          })
+          .catch(() => {});
+      },
+      () => {}, // геолокация недоступна — молча игнорируем
+    );
+  }, []);
 
   async function handleOrder() {
     if (!user) {
@@ -46,7 +75,7 @@ export function CartPage() {
         prescriptionUrl = await uploadPrescription(prescriptionFile);
       }
 
-      const order = (await ordersApi.create({
+      const res = (await ordersApi.create({
         pharmacy_id: pharmacy!.id,
         items: items.map((i) => ({
           medicine_id: i.medicine.id,
@@ -61,11 +90,16 @@ export function CartPage() {
         notes: notes || undefined,
       })) as any;
 
+      const orderId = res?.order?.id || res?.id;
       clear();
       toast.success("Заказ оформлен!", {
         style: { borderRadius: "12px", fontFamily: "Onest, sans-serif" },
       });
-      navigate(`/orders/${order.id || order.order?.id}`);
+      if (orderId) {
+        navigate(`/orders/${orderId}`);
+      } else {
+        navigate("/orders");
+      }
     } catch (e: any) {
       toast.error(e.message || "Ошибка при оформлении");
     } finally {
@@ -276,6 +310,37 @@ export function CartPage() {
           }}
           onClose={() => setShowMap(false)}
         />
+      )}
+
+      {/* Geo prompt */}
+      {geoPrompt && !address && (
+        <div className={styles.geoOverlay}>
+          <div className={styles.geoModal}>
+            <p className={styles.geoTitle}>📍 Доставить сюда?</p>
+            <p className={styles.geoAddress}>{geoPrompt.address}</p>
+            <div className={styles.geoBtns}>
+              <button
+                className="btn btn-ghost"
+                style={{ flex: 1 }}
+                onClick={() => setGeoPrompt(null)}
+              >
+                Нет
+              </button>
+              <button
+                className="btn btn-primary"
+                style={{ flex: 2 }}
+                onClick={() => {
+                  setAddress(geoPrompt.address);
+                  setLat(geoPrompt.lat);
+                  setLng(geoPrompt.lng);
+                  setGeoPrompt(null);
+                }}
+              >
+                Да, доставить
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
