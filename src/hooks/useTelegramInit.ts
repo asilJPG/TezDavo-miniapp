@@ -33,8 +33,15 @@ export function useTelegramInit() {
         if (tg) {
           tg.ready();
           tg.expand();
-          tg.setHeaderColor("#FFFFFF");
-          tg.setBackgroundColor("#F9FAFB");
+
+          // Применяем тему Telegram
+          const isDark = tg.colorScheme === "dark";
+          document.documentElement.setAttribute(
+            "data-theme",
+            isDark ? "dark" : "light",
+          );
+          tg.setHeaderColor(isDark ? "#1C1C1E" : "#FFFFFF");
+          tg.setBackgroundColor(isDark ? "#111111" : "#F9FAFB");
 
           const initData: string = tg.initData || "";
 

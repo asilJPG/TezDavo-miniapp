@@ -28,9 +28,29 @@
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.05);
   --font: "Onest", -apple-system, sans-serif;
-  --tg-color-scheme: light;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Тёмная тема */
+[data-theme="dark"] {
+  --white: #1c1c1e;
+  --gray-50: #111111;
+  --gray-100: #2c2c2e;
+  --gray-200: #3a3a3c;
+  --gray-300: #48484a;
+  --gray-400: #636366;
+  --gray-500: #8e8e93;
+  --gray-600: #aeaeb2;
+  --gray-700: #c7c7cc;
+  --gray-800: #e5e5ea;
+  --gray-900: #f2f2f7;
+  --blue-light: #1c2f4a;
+  --green-light: #1a2e1a;
+  --red-light: #2e1a1a;
+  --yellow-light: #2e2a1a;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 * {
@@ -266,7 +286,14 @@ body {
   font-size: 13px;
 }
 
-/* Fade in animation */
+/* Twemoji — одинаковые эмодзи на всех платформах */
+img.emoji {
+  height: 1em;
+  width: 1em;
+  margin: 0 0.05em 0 0.1em;
+  vertical-align: -0.1em;
+  display: inline-block;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;

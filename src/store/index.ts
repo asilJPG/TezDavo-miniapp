@@ -25,6 +25,39 @@ export const useAuthStore = create<AuthState>()((set) => ({
   logout: () => set({ user: null }),
 }));
 
+// ─── Theme store ───────────────────────────────────────────────────────────
+interface ThemeState {
+  isDark: boolean;
+  toggle: () => void;
+  setDark: (v: boolean) => void;
+}
+
+export const useThemeStore = create<ThemeState>()(
+  persist(
+    (set) => ({
+      isDark: false,
+      toggle: () =>
+        set((s) => {
+          const next = !s.isDark;
+          document.documentElement.setAttribute(
+            "data-theme",
+            next ? "dark" : "light",
+          );
+          return { isDark: next };
+        }),
+      setDark: (v) =>
+        set(() => {
+          document.documentElement.setAttribute(
+            "data-theme",
+            v ? "dark" : "light",
+          );
+          return { isDark: v };
+        }),
+    }),
+    { name: "tezdavo-theme" },
+  ),
+);
+
 // ─── Data cache store ──────────────────────────────────────────────────────
 interface CacheState {
   medicines: any[];
