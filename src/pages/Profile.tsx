@@ -5,6 +5,7 @@ import { authApi } from "../lib/api";
 import { formatPhone } from "../lib/utils";
 import { Icon } from "../components/ui/Icon";
 import { PhoneRequest } from "../components/ui/PhoneRequest";
+import { useThemeStore } from "../store";
 import toast from "react-hot-toast";
 import styles from "./Profile.module.css";
 
@@ -44,6 +45,8 @@ export function ProfilePage() {
       setSaving(false);
     }
   }
+
+  const { isDark, toggle } = useThemeStore();
 
   const menuItems = [
     {
@@ -178,6 +181,37 @@ export function ProfilePage() {
         </div>
 
         <div className={`card ${styles.infoCard}`}>
+          <div className={styles.infoRow}>
+            <span>Тёмная тема</span>
+            <button
+              onClick={toggle}
+              style={{
+                background: isDark ? "var(--blue)" : "var(--gray-200)",
+                border: "none",
+                borderRadius: 20,
+                width: 44,
+                height: 26,
+                cursor: "pointer",
+                position: "relative",
+                transition: "background 0.2s",
+              }}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  top: 3,
+                  left: isDark ? 21 : 3,
+                  width: 20,
+                  height: 20,
+                  borderRadius: "50%",
+                  background: "white",
+                  transition: "left 0.2s",
+                  display: "block",
+                }}
+              />
+            </button>
+          </div>
+          <hr className="divider" />
           <div className={styles.infoRow}>
             <span>Версия</span>
             <span className={styles.infoVal}>1.0.0</span>
