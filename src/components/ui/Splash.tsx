@@ -5,7 +5,7 @@ export function Splash() {
     <div className={styles.splash}>
       <div className={styles.logo}>
         <img
-          src="/icons/pill.png"
+          src="/icons/logo.png"
           width={56}
           height={56}
           style={{ objectFit: "contain" }}

@@ -38,18 +38,18 @@ export function HomePage() {
     <div className="scroll-area" style={{ flex: 1 }}>
       <div className={styles.header}>
         <div>
-          <p className={styles.greeting}>
+          {/* <p className={styles.greeting}>
             Привет, {user?.first_name || "Гость"} 👋
-          </p>
+          </p> */}
           <h1 className={styles.title}>
             Найдите нужные
             <br />
             лекарства
           </h1>
         </div>
-        <Link to="/profile" className={styles.avatar}>
+        {/* <Link to="/profile" className={styles.avatar}>
           {user?.first_name?.[0] || "?"}
-        </Link>
+        </Link> */}
       </div>
 
       <div className={styles.searchBar} onClick={() => navigate("/search")}>
