@@ -14,12 +14,12 @@
 
 .nav {
   display: flex;
+  align-items: center;
   background: var(--white);
   border-top: 1px solid var(--gray-100);
-  padding-bottom: var(--safe-bottom);
-  padding: 0 4px;
-  padding-bottom: max(var(--safe-bottom), 4px);
-  box-shadow: 0 -1px 0 var(--gray-100);
+  padding: 8px 8px;
+  padding-bottom: max(var(--safe-bottom), 8px);
+  gap: 4px;
 }
 
 .navItem {
@@ -28,14 +28,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 4px;
-  gap: 3px;
+  gap: 0;
   text-decoration: none;
   color: var(--gray-400);
-  transition: color 0.15s;
+  padding: 6px 8px;
+  border-radius: 14px;
+  transition: background 0.2s, color 0.2s;
+  min-width: 0;
 }
 
 .navItem.active {
+  background: #eff6ff;
   color: var(--blue);
 }
 
@@ -44,6 +47,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 28px;
+  height: 28px;
 }
 
 .badge {
@@ -66,6 +71,17 @@
 
 .label {
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.01em;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.2s ease, opacity 0.2s ease, margin-top 0.2s ease;
+  white-space: nowrap;
+}
+
+.labelVisible {
+  max-height: 16px;
+  opacity: 1;
+  margin-top: 3px;
 }
