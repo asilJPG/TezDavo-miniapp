@@ -28,8 +28,16 @@ export function useTelegramInit() {
           tg.ready();
           tg.expand();
 
-          // Применяем тему Telegram
-          const isDark = tg.colorScheme === "dark";
+          // Проверяем сохранённую тему пользователя
+          const savedTheme = localStorage.getItem("tezdavo-theme");
+          let isDark = tg.colorScheme === "dark"; // по умолчанию — тема Telegram
+          if (savedTheme) {
+            try {
+              const { state } = JSON.parse(savedTheme);
+              if (state?.isDark !== undefined) isDark = state.isDark; // приоритет у пользователя
+            } catch {}
+          }
+
           document.documentElement.setAttribute(
             "data-theme",
             isDark ? "dark" : "light",
