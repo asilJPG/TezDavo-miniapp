@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { pharmaciesApi } from "../lib/api";
-import { formatPrice } from "../lib/utils";
+import { formatPrice, isPharmacyOpen } from "../lib/utils";
 import type { Pharmacy, PharmacyInventory, Medicine } from "../types";
 import { Icon } from "../components/ui/Icon";
 import styles from "./PharmacyDetail.module.css";

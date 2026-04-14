@@ -72,6 +72,43 @@ export function getTelegramWebApp() {
 
 // ─── Phone validation (Uzbekistan) ────────────────────────────────────────
 
+export function isPharmacyOpen(workingHours: any): boolean {
+  if (!workingHours) return false;
+
+  const now = new Date();
+  // Ташкент UTC+5
+  const tashkentOffset = 5 * 60;
+  const localOffset = now.getTimezoneOffset();
+  const tashkentTime = new Date(
+    now.getTime() + (tashkentOffset + localOffset) * 60000,
+  );
+
+  const day = tashkentTime.getDay(); // 0=Sun, 1=Mon ... 6=Sat
+  const hours = tashkentTime.getHours();
+  const minutes = tashkentTime.getMinutes();
+  const currentMinutes = hours * 60 + minutes;
+
+  const isWeekend = day === 0 || day === 6;
+  const schedule =
+    typeof workingHours === "object"
+      ? isWeekend
+        ? workingHours.sat_sun
+        : workingHours.mon_fri
+      : workingHours;
+
+  if (!schedule) return false;
+
+  const [openStr, closeStr] = schedule.split("-");
+  if (!openStr || !closeStr) return false;
+
+  const [openH, openM] = openStr.trim().split(":").map(Number);
+  const [closeH, closeM] = closeStr.trim().split(":").map(Number);
+  const openMinutes = openH * 60 + openM;
+  const closeMinutes = closeH * 60 + closeM;
+
+  return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
+}
+
 export function formatPhone(phone: string): string {
   // +998 XX XXX-XX-XX
   const digits = phone.replace(/\D/g, "");

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore, useCacheStore } from "../store";
 import { medicinesApi, pharmaciesApi } from "../lib/api";
-import { formatPrice } from "../lib/utils";
+import { formatPrice, isPharmacyOpen } from "../lib/utils";
 import { Icon } from "../components/ui/Icon";
 import type { Medicine, Pharmacy } from "../types";
 import styles from "./Home.module.css";
@@ -161,9 +161,9 @@ export function HomePage() {
                     )}
                   </div>
                   <span
-                    className={`badge ${ph.is_active || ph.is_verified ? "badge-green" : "badge-gray"}`}
+                    className={`badge ${isPharmacyOpen(ph.working_hours) ? "badge-green" : "badge-gray"}`}
                   >
-                    {ph.is_active || ph.is_verified ? "Открыта" : "Закрыта"}
+                    {isPharmacyOpen(ph.working_hours) ? "Открыта" : "Закрыта"}
                   </span>
                 </Link>
               ))}

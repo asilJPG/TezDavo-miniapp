@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { pharmaciesApi } from "../lib/api";
 import { Icon } from "../components/ui/Icon";
 import type { Pharmacy } from "../types";
+import { isPharmacyOpen } from "../lib/utils";
 import styles from "./Pharmacies.module.css";
 
 declare const google: any;
@@ -161,9 +162,9 @@ export function PharmaciesPage() {
                 </div>
                 <div className={styles.right}>
                   <span
-                    className={`badge ${ph.is_active || ph.is_verified ? "badge-green" : "badge-gray"}`}
+                    className={`badge ${isPharmacyOpen(ph.working_hours) ? "badge-green" : "badge-gray"}`}
                   >
-                    {ph.is_active || ph.is_verified ? "Открыта" : "Закрыта"}
+                    {isPharmacyOpen(ph.working_hours) ? "Открыта" : "Закрыта"}
                   </span>
                   {ph.rating && ph.rating > 0 && (
                     <p className={styles.rating}>⭐ {ph.rating.toFixed(1)}</p>
