@@ -75,20 +75,23 @@ export function getTelegramWebApp() {
 export function isPharmacyOpen(workingHours: any): boolean {
   if (!workingHours) return false;
 
+  // Получаем время в Ташкенте через Intl
   const now = new Date();
-  // Ташкент UTC+5
-  const tashkentOffset = 5 * 60;
-  const localOffset = now.getTimezoneOffset();
-  const tashkentTime = new Date(
-    now.getTime() + (tashkentOffset + localOffset) * 60000,
-  );
+  const tashkentStr = now.toLocaleString("ru-RU", {
+    timeZone: "Asia/Tashkent",
+  });
+  // Формат: "14.04.2026, 23:11:05"
+  const timePart = tashkentStr.split(", ")[1] || "";
+  const [h, m] = timePart.split(":").map(Number);
+  const currentMinutes = h * 60 + m;
 
-  const day = tashkentTime.getDay(); // 0=Sun, 1=Mon ... 6=Sat
-  const hours = tashkentTime.getHours();
-  const minutes = tashkentTime.getMinutes();
-  const currentMinutes = hours * 60 + minutes;
+  // День недели в Ташкенте
+  const dayStr = now.toLocaleString("en-US", {
+    timeZone: "Asia/Tashkent",
+    weekday: "short",
+  });
+  const isWeekend = dayStr === "Sat" || dayStr === "Sun";
 
-  const isWeekend = day === 0 || day === 6;
   const schedule =
     typeof workingHours === "object"
       ? isWeekend
@@ -103,8 +106,8 @@ export function isPharmacyOpen(workingHours: any): boolean {
 
   const [openH, openM] = openStr.trim().split(":").map(Number);
   const [closeH, closeM] = closeStr.trim().split(":").map(Number);
-  const openMinutes = openH * 60 + openM;
-  const closeMinutes = closeH * 60 + closeM;
+  const openMinutes = openH * 60 + (openM || 0);
+  const closeMinutes = closeH * 60 + (closeM || 0);
 
   return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
 }
