@@ -13,7 +13,12 @@ export function CartPage() {
   const { items, removeItem, updateQuantity, clear, total, count } =
     useCartStore();
   const user = useAuthStore((s) => s.user);
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(
+    () => localStorage.getItem("tezdavo_last_address") || "",
+  );
+  const [apartment, setApartment] = useState(
+    () => localStorage.getItem("tezdavo_last_apartment") || "",
+  );
   const [lat, setLat] = useState<number | undefined>();
   const [lng, setLng] = useState<number | undefined>();
   const [notes, setNotes] = useState("");
@@ -44,20 +49,33 @@ export function CartPage() {
           .then((r) => r.json())
           .then((data) => {
             const results = data.results || [];
-            // Ищем нормальный адрес — street_address или route, не plus_code
+
+            // Ищем нормальный адрес без Plus Code
             const best =
+              results.find((r: any) => r.types.includes("street_address")) ||
               results.find(
                 (r: any) =>
-                  r.types.includes("street_address") ||
-                  r.types.includes("premise") ||
-                  r.types.includes("subpremise"),
+                  r.types.includes("premise") || r.types.includes("subpremise"),
               ) ||
-              results.find((r: any) => !r.types.includes("plus_code")) ||
-              results[0];
+              results.find((r: any) => r.types.includes("route")) ||
+              results.find(
+                (r: any) =>
+                  !r.plus_code && !r.formatted_address?.match(/^[A-Z0-9]{4}\+/),
+              );
 
             const addr = best?.formatted_address;
             if (addr) {
               setGeoPrompt({ address: addr, lat: latitude, lng: longitude });
+            } else if (results[0]) {
+              // Если нормального нет — берём первый но убираем Plus Code из начала
+              const raw = results[0].formatted_address || "";
+              const cleaned = raw.replace(/^[A-Z0-9]{4}\+[A-Z0-9]+,?\s*/, "");
+              if (cleaned)
+                setGeoPrompt({
+                  address: cleaned,
+                  lat: latitude,
+                  lng: longitude,
+                });
             }
           })
           .catch(() => {});
@@ -80,6 +98,15 @@ export function CartPage() {
       return;
     }
 
+    // Сохраняем последний адрес
+    localStorage.setItem("tezdavo_last_address", address);
+    localStorage.setItem("tezdavo_last_apartment", apartment);
+
+    // Объединяем адрес с квартирой
+    const fullAddress = apartment.trim()
+      ? `${address.trim()}, ${apartment.trim()}`
+      : address.trim();
+
     setLoading(true);
     try {
       let prescriptionUrl: string | undefined;
@@ -95,7 +122,7 @@ export function CartPage() {
           quantity: i.quantity,
           price: i.inventory.price,
         })),
-        delivery_address: address,
+        delivery_address: fullAddress,
         delivery_lat: lat,
         delivery_lng: lng,
         prescription_url: prescriptionUrl,
@@ -215,7 +242,7 @@ export function CartPage() {
                 className={`input ${styles.textarea}`}
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                placeholder="Ташкент, ул. Навои, д. 5, кв. 12..."
+                placeholder="Ташкент, ул. Навои, д. 5..."
                 rows={2}
               />
               <button
@@ -231,6 +258,16 @@ export function CartPage() {
                 📍 Координаты выбраны на карте
               </p>
             )}
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>Квартира, этаж, подъезд</label>
+            <input
+              className="input"
+              value={apartment}
+              onChange={(e) => setApartment(e.target.value)}
+              placeholder="кв. 12, этаж 3, подъезд 2..."
+            />
           </div>
 
           <div className={styles.field}>
@@ -328,15 +365,21 @@ export function CartPage() {
       {geoPrompt && !address && (
         <div className={styles.geoOverlay}>
           <div className={styles.geoModal}>
-            <p className={styles.geoTitle}>📍 Доставить сюда?</p>
+            <p className={styles.geoTitle}>📍 Ваше местоположение</p>
             <p className={styles.geoAddress}>{geoPrompt.address}</p>
+            <p style={{ fontSize: 12, color: "var(--gray-500)" }}>
+              Уточните адрес если нужно
+            </p>
             <div className={styles.geoBtns}>
               <button
                 className="btn btn-ghost"
                 style={{ flex: 1 }}
-                onClick={() => setGeoPrompt(null)}
+                onClick={() => {
+                  setGeoPrompt(null);
+                  setShowMap(true);
+                }}
               >
-                Нет
+                🗺 На карте
               </button>
               <button
                 className="btn btn-primary"
