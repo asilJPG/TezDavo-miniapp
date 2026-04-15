@@ -223,7 +223,7 @@ export function ProfilePage() {
           </div>
         </div>
 
-        <div style={{ height: 16 }} />
+        {/* <div style={{ height: 16 }} /> */}
       </div>
     </div>
   );
